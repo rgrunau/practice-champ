@@ -14,17 +14,8 @@ model PracticeItem {
   name                String
   tempo               Int[]
   description         String?
-  PracticeSessionItem PracticeSessionItem[]
-}
-
-model PracticeSessionItem {
-  id                String         @id
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime
-  practiceSessionId String
-  practiceItemId    String
-  PracticeItem      PracticeItem   @relation(fields: [practiceItemId], references: [id])
-  PracticeSesson    PracticeSesson @relation(fields: [practiceSessionId], references: [id])
+  PracticeSesson      PracticeSesson        @relation(fields: [practiceSessonId], references: [id])
+  practiceSessonId    String
 }
 
 model PracticeSesson {
@@ -32,18 +23,20 @@ model PracticeSesson {
   userId              String
   sessionDate         DateTime
   createdAt           DateTime              @default(now())
-  updatedAt           DateTime
-  notes               String?
-  PracticeSessionItem PracticeSessionItem[]
+  updatedAt           DateTime              @updatedAt
+  notes               String?               @db.Text
+  PracticeItem      PracticeItem[]
   User                User                  @relation(fields: [userId], references: [id])
+
+  @@index([userId], name: "userId")
 }
 
 model User {
   id             String           @id
+  clerkId        String           @unique
   createdAt      DateTime         @default(now())
-  updatedAt      DateTime
+  updatedAt      DateTime         @updatedAt
   email          String           @unique
   name           String?
-  password       String
   PracticeSesson PracticeSesson[]
 }
