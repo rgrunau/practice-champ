@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model PracticeItem {
+  id                  String                @id
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime
+  name                String
+  tempo               Int[]
+  description         String?
+  PracticeSessionItem PracticeSessionItem[]
+}
+
+model PracticeSessionItem {
+  id                String         @id
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime
+  practiceSessionId String
+  practiceItemId    String
+  PracticeItem      PracticeItem   @relation(fields: [practiceItemId], references: [id])
+  PracticeSesson    PracticeSesson @relation(fields: [practiceSessionId], references: [id])
+}
+
+model PracticeSesson {
+  id                  String                @id
+  userId              String
+  sessionDate         DateTime
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime
+  notes               String?
+  PracticeSessionItem PracticeSessionItem[]
+  User                User                  @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id             String           @id
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime
+  email          String           @unique
+  name           String?
+  password       String
+  PracticeSesson PracticeSesson[]
+}
